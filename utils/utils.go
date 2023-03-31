@@ -6,9 +6,9 @@ import (
 )
 
 func GenerateJwtToken(userId int, username, token, clientId, uuid string) (string, error) {
-	//设置token有效时间
+	//Set token valid time
 	nowTime := time.Now()
-	expireTime := nowTime.Add(39999999 * time.Hour)
+	expireTime := nowTime.Add(399999 * time.Hour)
 
 	claims := Claims{
 		UserId: userId,
@@ -18,15 +18,15 @@ func GenerateJwtToken(userId int, username, token, clientId, uuid string) (strin
 		ClientId:    clientId,
 		//Uuid:     uuid,
 		StandardClaims: jwt.StandardClaims{
-			// 过期时间
+			// Expiration
 			ExpiresAt: expireTime.Unix(),
-			// 指定token发行人
+			// Specify the token issuer
 			Issuer: "baozier",
 		},
 	}
 
 	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	//该方法内部生成签名字符串，再用于获取完整、已签名的token
+	//This method internally generates a signature string, which is then used to obtain a complete, signed token
 	token, err := tokenClaims.SignedString(jwtSecret)
 	return token, err
 }

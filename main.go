@@ -16,7 +16,7 @@ func main() {
 	log.Println("RustDesk Api Server")
 
 	flogs.InitLogger()
-	// 设置请求内容为复制体
+	// Set the request content as a copy body
 	web.BConfig.CopyRequestBody = true
 	orm.Debug = true
 	orm.RunSyncdb("default", false, true)

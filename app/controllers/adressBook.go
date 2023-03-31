@@ -15,7 +15,7 @@ type AddressBookController struct {
 	BaseController
 }
 
-// 查看地址谱列表
+// View Address Spectrum List
 func (ctl *AddressBookController) List() {
 	ack := dto.AbGetAck{}
 	ack.Tags = []string{}
@@ -39,7 +39,7 @@ func (ctl *AddressBookController) List() {
 		})
 	}
 
-	// 查询出来所有已登录的账号列表
+	// Query the list of all logged-in accounts
 	tokens := services.Token.FindTokens(ctl.loginUserInfo.Id)
 	for _, item := range *tokens {
 		ist := false
@@ -52,10 +52,10 @@ func (ctl *AddressBookController) List() {
 		if !ist {
 			ack.Peers = append(ack.Peers, dto.AbGetPeer{
 				Id:       item.ClientId,
-				Username: "----",
+				Username: item.Username,
 				Hostname: item.ClientId,
-				Alias:    "本号归属:" + item.ClientId,
-				Platform: "无",
+				Alias:    "Owner of:" + item.ClientId,
+				Platform: "none",
 				Tags:     strings.Split("", ","),
 			})
 		}
@@ -76,7 +76,7 @@ func (ctl *AddressBookController) Update() {
 
 	if err := ctl.BindJSON(&req); err != nil {
 		ctl.JSON(beegoHelper.H{
-			"error": "请求参数异常",
+			"error": "Request parameter exception",
 		})
 		return
 	}
@@ -86,7 +86,7 @@ func (ctl *AddressBookController) Update() {
 	err := json.Unmarshal([]byte(req.Data), reqSub)
 	if err != nil {
 		ctl.JSON(beegoHelper.H{
-			"error": "请求数据异常",
+			"error": "Request data exception",
 		})
 	}
 
@@ -98,18 +98,18 @@ func (ctl *AddressBookController) Update() {
 	// 开始批量插入tags
 	if !services.Tags.BatchAdd(ctl.loginUserInfo.Id, reqSub.Tags) {
 		ctl.JSON(beegoHelper.H{
-			"error": "导入标签失败",
+			"error": "Failed to import tags",
 		})
 	}
 	// 开始批量插入peers
 	if !services.Peers.BatchAdd(ctl.loginUserInfo.Id, reqSub.Peers) {
 		ctl.JSON(beegoHelper.H{
-			"error": "导入地址簿失败",
+			"error": "Import address book failed",
 		})
 	}
 
 	ctl.JSON(beegoHelper.H{
-		"data": "成功",
+		"data": "success",
 	})
 
 }

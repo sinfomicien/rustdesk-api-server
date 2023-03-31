@@ -20,22 +20,26 @@ type BaseController struct {
 }
 
 func (ctl *BaseController) Prepare() {
+    var accessLog string
+    accessLog = "IP:" + ctl.Ctx.Input.IP() + " Method:"+ctl.Ctx.Input.Method() + " " + 
+               "URL:" + ctl.Ctx.Input.URL() + " " + "UserAgent" + ctl.Ctx.Input.UserAgent()
+    log.Println(accessLog)
 	controllerName, actionName := ctl.GetControllerAndAction()
 	ctl.controllerName = strings.ToLower(controllerName[0 : len(controllerName)-10])
 	ctl.actionName = strings.ToLower(actionName)
-	log.Println("请求接口", ctl.controllerName, ctl.actionName)
+	log.Println("Request", ctl.controllerName, ctl.actionName)
 	// 获取token
 	token := ctl.Ctx.Input.Header("Authorization")
 	if ctl.controllerName != "login" && ctl.controllerName != "index" && !(ctl.controllerName == "user" && (ctl.actionName == "reg" || ctl.actionName == "setpwd")) {
 		if token == "" {
 			ctl.JSON(beegoHelper.H{
-				"error": "用户授权验证失败",
+				"error": "User authorization verification failed",
 			})
 		} else {
 			// 校验用户登录
 			if !ctl.CheckLogin() {
 				ctl.JSON(beegoHelper.H{
-					"error": "用户授权信息错误",
+					"error": "User authorization information error",
 				})
 			}
 		}
@@ -91,7 +95,7 @@ func (ctl *BaseController) CheckLogin() bool {
 	ctl.loginUserInfo = &loginInfo
 	if ctl.loginUserInfo.Status != 1 {
 		ctl.JSON(beegoHelper.H{
-			"error": "用户已被禁用",
+			"error": "user is disabled",
 		})
 		return false
 	}

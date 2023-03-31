@@ -21,7 +21,7 @@ func (u *Token) TableName() string {
 	return "rustdesk_token"
 }
 
-// 多字段唯一键
+// Multi-field unique key
 func (u *Token) TableUnique() [][]string {
 	return [][]string{
 		[]string{"uid", "client_id", "uuid"},
@@ -29,7 +29,7 @@ func (u *Token) TableUnique() [][]string {
 }
 
 func init() {
-	log.Printf("初始化模型")
-	// 初始化模型
+	log.Printf("Initialize the model")
+	// Initialize the model
 	orm.RegisterModel(new(Token))
 }

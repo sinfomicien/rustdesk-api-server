@@ -17,23 +17,23 @@ type LoginService struct {
 
 func (s *LoginService) UserLogin(username, password, clientId, uuid string, ctx *context.Context) (token string, err error) {
 
-	// 查询用户是否存在
+	// Query whether the user exists
 	var user models.User
 	err = orm.NewOrm().QueryTable(new(models.User)).
 		Filter("username", username).One(&user)
 	if err != nil {
-		return "", errors.New("用户名或密码不正确")
+		return "", errors.New("Incorrect username or password")
 	}
 
 	// 生成密码
 	pwd := User.GenPwd(password)
 	// 检测密码是否正确
 	if user.Password != pwd {
-		return "", errors.New("用户名或密码不正确")
+		return "", errors.New("Incorrect username or password")
 	}
-	// 判断用户是否被禁用
+	// Determine if a user is disabled
 	if user.Status != 1 {
-		return "", errors.New("当前用户被禁用")
+		return "", errors.New("current user is disabled")
 	}
 
 	m := orm.NewOrm()

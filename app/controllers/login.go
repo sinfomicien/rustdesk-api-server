@@ -14,10 +14,10 @@ type LoginController struct {
 	BaseController
 }
 
-// 登录
+// Login
 func (ctl *LoginController) Login() {
 	if ctl.Ctx.Input.IsPost() {
-		// 获取请求参数
+		// Get request parameters
 		var req dto.LoginReq
 		if err := ctl.BindJSON(&req); err != nil {
 			ctl.JSON(common.JsonResult{
@@ -28,25 +28,25 @@ func (ctl *LoginController) Login() {
 		if len(req.Username) == 0 {
 			ctl.JSON(common.JsonResult{
 				Code:  -1,
-				Error: "用户名不能为空",
+				Error: "Username can not be empty",
 			})
 		}
 		req.Password = strings.TrimSpace(req.Password)
 		if len(req.Password) == 0 {
 			ctl.JSON(common.JsonResult{
 				Code:  -1,
-				Error: "密码不能为空",
+				Error: "password can not be blank",
 			})
 		}
 		req.ClientId = strings.TrimSpace(req.ClientId)
 		if len(req.ClientId) == 0 {
 			ctl.JSON(common.JsonResult{
 				Code:  -1,
-				Error: "客户端ID不能为空",
+				Error: "Client ID cannot be empty",
 			})
 		}
 
-		// 查询数据库中的账号密码是否合法
+		// Check if password correspond to user
 		token, err := services.Login.UserLogin(req.Username, req.Password, req.ClientId, req.Uuid, ctl.Ctx)
 		if err != nil {
 			ctl.JSON(common.JsonResult{
@@ -56,9 +56,12 @@ func (ctl *LoginController) Login() {
 		}
 
 		ctl.JSON(beegoHelper.H{
+			"type": "access_token",
 			"access_token": token,
 			"user": beegoHelper.H{
 				"name": req.Username,
+				"grp": "default",
+				"is_admin": true,
 			},
 		})
 
