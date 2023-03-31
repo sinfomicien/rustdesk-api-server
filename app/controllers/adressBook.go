@@ -64,7 +64,7 @@ func (ctl *AddressBookController) List() {
 	jdata, _ := json.Marshal(ack)
 
 	ctl.JSON(beegoHelper.H{
-		"error":     false,
+//		"error":     false,
 		"data":      string(jdata),
 		"update_at": time.Now().Format("2006-01-02 15:04:05"),
 	})
